@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 //Adnotacja nad klasą wskazująca wskazująca pojedyńczy serwis
 @WebService()
 public class CustomerService implements CustomerInterface {
-    List<Customer> customers = new ArrayList<>();
+    private List<Customer> customers = new ArrayList<>();
 //W metodzie main tworzymy instancje serwisu, ustawiamy adres i publikujemy endpoint
     public static void main(String[] argv) {
         Object implementor = new CustomerService();
@@ -45,7 +45,7 @@ public class CustomerService implements CustomerInterface {
     @Override
     public boolean deleteCustomer(@WebParam(name="id")long id) {
         try {
-            customers.remove(customers.stream().filter(cus -> cus.getId() == id).findFirst().get());
+            customers.remove(customers.stream().filter(cus -> cus.getId() == id).findFirst().orElse(null));
             return true;
         } catch (Exception e) {
             System.out.println("Can't remove -> " + e.getLocalizedMessage());
@@ -56,7 +56,7 @@ public class CustomerService implements CustomerInterface {
     @WebMethod
     @Override
     public Customer getCustomer(@WebParam(name="id")long id) {
-        return customers.stream().filter(cus -> cus.getId() == id).findFirst().get();
+        return customers.stream().filter(cus -> cus.getId() == id).findFirst().orElse(null);
     }
 
     @WebMethod()
@@ -67,8 +67,6 @@ public class CustomerService implements CustomerInterface {
 
     private long getMaxId(){
         List<Long> ids = customers.stream().map(Customer::getId).collect(Collectors.toList());
-        if(ids.isEmpty())
-            return -1;
-        return ids.stream().max(Long::compare).get();
+        return ids.stream().max(Long::compare).orElse(-1L);
     }
 }
