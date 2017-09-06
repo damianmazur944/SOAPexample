@@ -2,22 +2,36 @@ package example;
 
 import javax.crypto.CipherInputStream;
 import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.xml.ws.Endpoint;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
+//Adnotacja nad klasą wskazująca wskazująca pojedyńczy serwis
 @WebService()
 public class CustomerService implements CustomerInterface {
-
     List<Customer> customers = new ArrayList<>();
+//W metodzie main tworzymy instancje serwisu, ustawiamy adres i publikujemy endpoint
+    public static void main(String[] argv) {
+        Object implementor = new CustomerService();
+        String address = "http://localhost:9000/Customers";
+        Endpoint.publish(address, implementor);
+    }
 
-    @WebMethod
+
+//Adnotacja WebMethod wskazuje na metode dostępną przez WS
+    @WebMethod(operationName = "addCustomer")
     @Override
-    public boolean addCustomer(String name, String surname, Integer age) {
+    public boolean addCustomer(@WebParam(name="name")String name,
+                               @WebParam(name="surname") String surname,
+                               @WebParam(name="age") Integer age) {
         try {
             Customer customer = new Customer(name, surname, age);
-            customer.setId(customers.size() * 3);
+            customer.setId(getMaxId()+1);
             customers.add(customer);
             System.out.println("Customer added");
             return true;
@@ -29,9 +43,9 @@ public class CustomerService implements CustomerInterface {
 
     @WebMethod
     @Override
-    public boolean deleteCustomer(Customer customer) {
+    public boolean deleteCustomer(@WebParam(name="id")long id) {
         try {
-            customers.remove(customer);
+            customers.remove(customers.stream().filter(cus -> cus.getId() == id).findFirst().get());
             return true;
         } catch (Exception e) {
             System.out.println("Can't remove -> " + e.getLocalizedMessage());
@@ -41,19 +55,20 @@ public class CustomerService implements CustomerInterface {
 
     @WebMethod
     @Override
-    public Customer getCustomer(long id) {
+    public Customer getCustomer(@WebParam(name="id")long id) {
         return customers.stream().filter(cus -> cus.getId() == id).findFirst().get();
     }
 
-    @WebMethod
+    @WebMethod()
     @Override
     public List<Customer> getAllCustomers() {
         return customers;
     }
 
-    public static void main(String[] argv) {
-        Object implementor = new CustomerService();
-        String address = "http://localhost:9000/Customers";
-        Endpoint.publish(address, implementor);
+    private long getMaxId(){
+        List<Long> ids = customers.stream().map(Customer::getId).collect(Collectors.toList());
+        if(ids.isEmpty())
+            return -1;
+        return ids.stream().max(Long::compare).get();
     }
 }

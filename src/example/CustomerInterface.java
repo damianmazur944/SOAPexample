@@ -4,11 +4,11 @@ import java.util.List;
 
 public interface CustomerInterface {
 
-    public boolean addCustomer(String name, String surname, Integer age);
+     boolean addCustomer(String name, String surname, Integer age);
 
-    public boolean deleteCustomer(Customer customer);
+     boolean deleteCustomer(long id);
 
-    public Customer getCustomer(long id);
+     Customer getCustomer(long id);
 
-    public List<Customer> getAllCustomers();
+     List<Customer> getAllCustomers();
 }

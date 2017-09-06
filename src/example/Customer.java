@@ -4,13 +4,13 @@ import javax.jws.WebService;
 
 
 public class Customer {
-    private long id;
+    private Long id;
 
     private String name;
     private String surname;
     private Integer age;
 
-    public Customer(String name, String surname, Integer age) {
+    Customer(String name, String surname, Integer age) {
         this.name = name;
         this.surname = surname;
         this.age = age;
@@ -46,4 +46,5 @@ public class Customer {
     public void setId(long id) {
         this.id = id;
     }
+
 }
