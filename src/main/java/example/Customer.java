@@ -1,14 +1,22 @@
 package example;
 
 import javax.jws.WebService;
+import javax.persistence.*;
 
-
+@Entity
 public class Customer {
+    @Id
+    @Column
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    @Column
     private String name;
+    @Column
     private String surname;
+    @Column
     private Integer age;
+
+    public Customer() {}
 
     Customer(String name, String surname, Integer age) {
         this.name = name;
@@ -47,4 +55,13 @@ public class Customer {
         this.id = id;
     }
 
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", age=" + age +
+                '}';
+    }
 }
