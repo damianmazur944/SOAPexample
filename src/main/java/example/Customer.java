@@ -1,7 +1,7 @@
 package example;
 
-import javax.jws.WebService;
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Customer {
@@ -15,10 +15,13 @@ public class Customer {
     private String surname;
     @Column
     private Integer age;
+    @OneToMany
+    private List<Orders> orders;
 
-    public Customer() {}
+    public Customer() {
+    }
 
-    Customer(String name, String surname, Integer age) {
+    public Customer(String name, String surname, Integer age) {
         this.name = name;
         this.surname = surname;
         this.age = age;
@@ -47,12 +50,21 @@ public class Customer {
     public void setAge(Integer age) {
         this.age = age;
     }
+
     public long getId() {
         return id;
     }
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public List<Orders> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Orders> orders) {
+        this.orders = orders;
     }
 
     @Override
@@ -64,4 +76,9 @@ public class Customer {
                 ", age=" + age +
                 '}';
     }
+
+    public void addOrder(Orders orders) {
+        this.orders.add(orders);
+    }
+
 }
