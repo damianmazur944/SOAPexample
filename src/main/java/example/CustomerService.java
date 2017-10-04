@@ -1,6 +1,8 @@
 package example;
 
 
+import Validators.AgeValidator;
+import Validators.NameValidator;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -18,7 +20,7 @@ import javax.jws.WebService;
 import java.util.ArrayList;
 import java.util.List;
 
-//Adnotacja nad klasą wskazująca wskazująca pojedyńczy serwis
+
 @WebService()
 public class CustomerService implements example.CustomerInterface {
 
@@ -31,18 +33,24 @@ public class CustomerService implements example.CustomerInterface {
     public boolean addCustomer(@WebParam(name = "name") String name,
                                @WebParam(name = "surname") String surname,
                                @WebParam(name = "age") Integer age) {
-        try {
-            Customer customer = new Customer(name, surname, age);
-            Session session = sessionFactory.openSession();
-            Transaction tx = session.beginTransaction();
-            session.save(customer);
-            session.flush();
-            tx.commit();
-            session.close();
-            logger.debug("Customer added");
-            return true;
-        } catch (Exception e) {
-            logger.debug("Error -> " + e.getLocalizedMessage());
+        if(NameValidator.checkIsValid(name) && NameValidator.checkIsValid(surname) && AgeValidator.checkIsValid(age)) {
+            try {
+                Customer customer = new Customer(name, surname, age);
+                Session session = sessionFactory.openSession();
+                Transaction tx = session.beginTransaction();
+                session.save(customer);
+                session.flush();
+                tx.commit();
+                session.close();
+                logger.debug("Customer added");
+                return true;
+            } catch (Exception e) {
+                logger.debug("Error -> " + e.getLocalizedMessage());
+                return false;
+            }
+        }
+        else{
+            logger.debug("Input data is not valid (name,surname or age)");
             return false;
         }
     }

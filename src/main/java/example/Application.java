@@ -9,7 +9,7 @@ public class Application {
 
     public static void main(String[] argv) {
         Object implementor = new CustomerService();
-        String address = "http://localhost:9000/Customers2";
+        String address = "http://localhost:9090/Customers2";
         Endpoint.publish(address, implementor);
         logger.debug("Endpoint published on address: "+address);
     }

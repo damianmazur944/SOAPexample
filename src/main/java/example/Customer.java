@@ -1,6 +1,7 @@
 package example;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
 
 @Entity
